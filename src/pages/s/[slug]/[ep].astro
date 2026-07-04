@@ -1,0 +1,41 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Beat from '../../../components/Beat.astro';
+import { getCollection } from 'astro:content';
+import { url } from '../../../lib/site';
+
+export async function getStaticPaths() {
+  const all = await getCollection('series');
+  const paths = [];
+  for (const e of all) {
+    for (const ep of e.data.episodes) {
+      paths.push({ params: { slug: e.data.slug, ep: String(ep.no) }, props: { s: e.data, ep } });
+    }
+  }
+  return paths;
+}
+
+const { s, ep } = Astro.props;
+const idx = s.episodes.findIndex((e) => e.no === ep.no);
+const prev = idx > 0 ? s.episodes[idx - 1] : null;
+const next = idx >= 0 && idx < s.episodes.length - 1 ? s.episodes[idx + 1] : null;
+---
+
+<Base title={`${ep.no}화 ${ep.title} — ${s.title}`} description={s.world}>
+  <article class="episode">
+    <a class="crumb" href={url(`s/${s.slug}/`)}>← {s.title}</a>
+    <h1 class="ep-title">{ep.no}화 · {ep.title}</h1>
+    {ep.intro_hook && <p class="ep-hook">{ep.intro_hook}</p>}
+
+    <div class="beats">
+      {ep.beats.map((b) => <Beat beat={b} />)}
+    </div>
+
+    {ep.outro && <p class="ep-outro">{ep.outro}</p>}
+
+    <nav class="ep-nav">
+      {prev ? <a href={url(`s/${s.slug}/${prev.no}/`)}>← {prev.no}화</a> : <span></span>}
+      {next ? <a href={url(`s/${s.slug}/${next.no}/`)}>{next.no}화 →</a> : <span></span>}
+    </nav>
+  </article>
+</Base>

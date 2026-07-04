@@ -1,0 +1,54 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { asset, url } from '../lib/site';
+
+const all = await getCollection('series');
+const series = all
+  .map((e) => e.data)
+  .sort(
+    (a, b) =>
+      (b.order || 0) - (a.order || 0) ||
+      (b.published_at || '').localeCompare(a.published_at || '')
+  );
+---
+
+<Base>
+  <section class="home-hero">
+    <p class="hero-kick">CYBER JOURNEY · 이세계 기행</p>
+    <h1 class="hero-title">가보지 않은 세계를<br />걸어서 돌아온 기록</h1>
+    <p class="hero-sub">
+      원작 시점에서 한참 흐른 뒤의 픽션 세계로 들어가, 이방인 관광객으로 어슬렁거리다 온 여행기.
+    </p>
+  </section>
+
+  {
+    series.length === 0 ? (
+      <div class="empty">아직 발행된 여행기가 없습니다. 첫 여정을 준비 중입니다.</div>
+    ) : (
+      <ul class="series-grid">
+        {series.map((s) => (
+          <li class="series-card">
+            <a href={url(`s/${s.slug}/`)}>
+              {s.cover_image ? (
+                <div class="sc-cover">
+                  <img src={asset(s.cover_image)} alt={s.title} loading="lazy" />
+                </div>
+              ) : (
+                <div class="sc-cover sc-cover--blank">
+                  <span>✦</span>
+                </div>
+              )}
+              <div class="sc-body">
+                {s.era_gap && <div class="sc-era">◷ {s.era_gap}</div>}
+                <h2 class="sc-title">{s.title}</h2>
+                {s.world && <div class="sc-world">{s.world}</div>}
+                <div class="sc-meta">{s.episodes.length}화</div>
+              </div>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</Base>

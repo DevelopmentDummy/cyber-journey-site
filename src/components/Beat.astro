@@ -1,0 +1,41 @@
+---
+import { asset, TYPES, SENSES } from '../lib/site';
+
+const { beat } = Astro.props;
+const t = TYPES[beat.type] ?? { kr: beat.type || '장면', en: '' };
+const isAwe = beat.type === 'awe';
+const sensory = beat.sensory ?? {};
+const senses = SENSES.filter((s) => sensory[s.k] && String(sensory[s.k]).trim());
+---
+
+<article class:list={['beat', { awe: isAwe }]}>
+  <div class="beat-head">
+    <span class="tstamp">
+      <span class="kr">{t.kr}</span>
+      {t.en && <span class="en">{t.en}</span>}
+    </span>
+    {beat.location_name && <span class="loc">{beat.location_name}</span>}
+  </div>
+
+  {beat.image && (
+    <figure class="frame">
+      <img src={asset(beat.image)} alt={beat.location_name || t.kr} loading="lazy" />
+      {beat.caption && <figcaption class="cap">{beat.caption}</figcaption>}
+    </figure>
+  )}
+  {!beat.image && beat.caption && <p class="cap cap-left">{beat.caption}</p>}
+
+  {beat.narration && <p class="narr">{beat.narration}</p>}
+
+  {senses.length > 0 && (
+    <div class="senses">
+      <div class="senses-h">감각 · sensory</div>
+      {senses.map((s) => (
+        <div class="sense">
+          <span class="sl">{s.l}</span>
+          <span class="st">{sensory[s.k]}</span>
+        </div>
+      ))}
+    </div>
+  )}
+</article>

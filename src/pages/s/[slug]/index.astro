@@ -1,0 +1,69 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { asset, url } from '../../../lib/site';
+
+export async function getStaticPaths() {
+  const all = await getCollection('series');
+  return all.map((e) => ({ params: { slug: e.data.slug }, props: { s: e.data } }));
+}
+
+const { s } = Astro.props;
+const prologueParas = (s.prologue || '').split(/\n{2,}/).filter((p) => p.trim());
+---
+
+<Base title={s.title} description={s.world}>
+  <article class="series">
+    <header class="series-head">
+      {s.cover_image && (
+        <div class="series-cover">
+          <img src={asset(s.cover_image)} alt={s.title} />
+        </div>
+      )}
+      <div class="series-head-inner">
+        {s.era_gap && <div class="s-era">◷ {s.era_gap}</div>}
+        <h1 class="s-title">{s.title}</h1>
+        {s.world && <div class="s-world">{s.world}</div>}
+        {(s.narrator.origin || s.narrator.motive || s.narrator.budget) && (
+          <div class="passport">
+            {s.narrator.origin && (
+              <span class="pp">출신 <b>{s.narrator.origin}</b></span>
+            )}
+            {s.narrator.motive && (
+              <span class="pp">여행 동기 <b>{s.narrator.motive}</b></span>
+            )}
+            {s.narrator.budget && (
+              <span class="pp">예산 <b>{s.narrator.budget}</b></span>
+            )}
+          </div>
+        )}
+      </div>
+    </header>
+
+    {s.route_map && (
+      <div class="route-map">
+        <img src={asset(s.route_map)} alt="여정 지도" />
+      </div>
+    )}
+
+    {prologueParas.length > 0 && (
+      <div class="prologue">
+        {prologueParas.map((p) => <p>{p}</p>)}
+      </div>
+    )}
+
+    {s.final_destination && (
+      <p class="final-dest">이 여행의 종착지 — <b>{s.final_destination}</b></p>
+    )}
+
+    <nav class="ep-list">
+      <div class="ep-list-h">회차 · Episodes</div>
+      {s.episodes.map((ep) => (
+        <a class="ep-link" href={url(`s/${s.slug}/${ep.no}/`)}>
+          <span class="ep-no">{ep.no}화</span>
+          <span class="ep-t">{ep.title}</span>
+        </a>
+      ))}
+    </nav>
+  </article>
+</Base>

@@ -1,0 +1,41 @@
+---
+import '../styles/global.css';
+import { SITE_TITLE, SITE_DESC, url } from '../lib/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title, description } = Astro.props;
+const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href={url('favicon.svg')} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description ?? SITE_DESC} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description ?? SITE_DESC} />
+    <meta property="og:type" content="website" />
+  </head>
+  <body>
+    <header class="site-head">
+      <a class="brand" href={url('')}>
+        <span class="brand-mark">✦</span>
+        <span class="brand-name">{SITE_TITLE}</span>
+      </a>
+      <span class="brand-tag">CYBER&nbsp;JOURNEY</span>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="site-foot">
+      <span>{SITE_TITLE}</span>
+      <span class="foot-dim">픽션 세계를 걷는 이방인의 기록</span>
+    </footer>
+  </body>
+</html>
