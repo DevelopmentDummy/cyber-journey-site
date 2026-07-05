@@ -1,11 +1,8 @@
 ---
-import { asset, TYPES, SENSES } from '../lib/site';
+import { asset } from '../lib/site';
 
 const { beat } = Astro.props;
-const t = TYPES[beat.type] ?? { kr: beat.type || '장면', en: '' };
 const isAwe = beat.type === 'awe';
-const sensory = beat.sensory ?? {};
-const senses = SENSES.filter((s) => sensory[s.k] && String(sensory[s.k]).trim());
 
 // 내레이션을 «[[img: 경로 | 캡션]]» 마커 기준으로 텍스트/이미지 세그먼트로 분해
 type Seg = { kind: 'text'; text: string } | { kind: 'img'; src: string; cap: string };
@@ -25,28 +22,21 @@ const extraImages = (beat.images ?? []).filter((im: any) => im && im.image);
 ---
 
 <article class:list={['beat', { awe: isAwe }]}>
-  <div class="beat-head">
-    <span class="tstamp">
-      <span class="kr">{t.kr}</span>
-      {t.en && <span class="en">{t.en}</span>}
-    </span>
-    {beat.location_name && <span class="loc">{beat.location_name}</span>}
-  </div>
+  {beat.location_name && <div class="loc">{beat.location_name}</div>}
 
   {beat.image && (
     <figure class="frame">
-      <img src={asset(beat.image)} alt={beat.location_name || t.kr} loading="lazy" />
+      <img src={asset(beat.image)} alt={beat.location_name || '여행 사진'} loading="lazy" />
       {beat.caption && <figcaption class="cap">{beat.caption}</figcaption>}
     </figure>
   )}
-  {!beat.image && beat.caption && <p class="cap cap-left">{beat.caption}</p>}
 
   {segs.map((seg) =>
     seg.kind === 'text' ? (
       <p class="narr">{seg.text}</p>
     ) : (
       <figure class="frame">
-        <img src={asset(seg.src)} alt={beat.location_name || t.kr} loading="lazy" />
+        <img src={asset(seg.src)} alt={beat.location_name || '여행 사진'} loading="lazy" />
         {seg.cap && <figcaption class="cap">{seg.cap}</figcaption>}
       </figure>
     )
@@ -54,20 +44,10 @@ const extraImages = (beat.images ?? []).filter((im: any) => im && im.image);
 
   {extraImages.map((im: any) => (
     <figure class="frame">
-      <img src={asset(im.image)} alt={beat.location_name || t.kr} loading="lazy" />
+      <img src={asset(im.image)} alt={beat.location_name || '여행 사진'} loading="lazy" />
       {im.caption && <figcaption class="cap">{im.caption}</figcaption>}
     </figure>
   ))}
 
-  {senses.length > 0 && (
-    <div class="senses">
-      <div class="senses-h">감각 · sensory</div>
-      {senses.map((s) => (
-        <div class="sense">
-          <span class="sl">{s.l}</span>
-          <span class="st">{sensory[s.k]}</span>
-        </div>
-      ))}
-    </div>
-  )}
+  {!beat.image && beat.caption && <p class="cap cap-left">{beat.caption}</p>}
 </article>

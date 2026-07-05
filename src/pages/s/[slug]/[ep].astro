@@ -24,7 +24,7 @@ const next = idx >= 0 && idx < s.episodes.length - 1 ? s.episodes[idx + 1] : nul
 <Base title={`${ep.no}화 ${ep.title} — ${s.title}`} description={s.world}>
   <article class="episode">
     <a class="crumb" href={url(`s/${s.slug}/`)}>← {s.title}</a>
-    <h1 class="ep-title">{ep.no}화 · {ep.title}</h1>
+    <h1 class="ep-title">{ep.title || `${ep.no}화`}</h1>
     {ep.intro_hook && <p class="ep-hook">{ep.intro_hook}</p>}
 
     <div class="beats">

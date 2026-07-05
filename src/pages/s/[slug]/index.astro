@@ -21,47 +21,42 @@ const prologueParas = (s.prologue || '').split(/\n{2,}/).filter((p) => p.trim())
         </div>
       )}
       <div class="series-head-inner">
-        {s.era_gap && <div class="s-era">◷ {s.era_gap}</div>}
+        {s.era_gap && <div class="s-era">{s.era_gap}</div>}
         <h1 class="s-title">{s.title}</h1>
-        {s.world && <div class="s-world">{s.world}</div>}
-        {(s.narrator.origin || s.narrator.motive || s.narrator.budget) && (
-          <div class="passport">
-            {s.narrator.origin && (
-              <span class="pp">출신 <b>{s.narrator.origin}</b></span>
-            )}
-            {s.narrator.motive && (
-              <span class="pp">여행 동기 <b>{s.narrator.motive}</b></span>
-            )}
-            {s.narrator.budget && (
-              <span class="pp">예산 <b>{s.narrator.budget}</b></span>
-            )}
-          </div>
-        )}
+        <div class="byline">
+          {s.narrator.origin && (
+            <>
+              <b>{s.narrator.origin}</b>에서 온 여행자
+              {s.narrator.budget && <> · {s.narrator.budget}</>}
+              <br />
+            </>
+          )}
+          {s.world && <>{s.world}</>}
+        </div>
       </div>
     </header>
 
     {s.route_map && (
-      <div class="route-map">
+      <figure class="route-map">
         <img src={asset(s.route_map)} alt="여정 지도" />
-      </div>
+        <figcaption class="cap">이번 여정의 경로</figcaption>
+      </figure>
     )}
 
     {prologueParas.length > 0 && (
-      <div class="prologue">
-        {prologueParas.map((p) => <p>{p}</p>)}
-      </div>
-    )}
-
-    {s.final_destination && (
-      <p class="final-dest">이 여행의 종착지 — <b>{s.final_destination}</b></p>
+      <>
+        <div class="prol-label">여는 글</div>
+        <div class="prologue">
+          {prologueParas.map((p) => <p>{p}</p>)}
+        </div>
+      </>
     )}
 
     <nav class="ep-list">
       <div class="ep-list-h">회차 · Episodes</div>
       {s.episodes.map((ep) => (
         <a class="ep-link" href={url(`s/${s.slug}/${ep.no}/`)}>
-          <span class="ep-no">{ep.no}화</span>
-          <span class="ep-t">{ep.title}</span>
+          <span class="ep-t">{ep.title || `${ep.no}화`}</span>
         </a>
       ))}
     </nav>
