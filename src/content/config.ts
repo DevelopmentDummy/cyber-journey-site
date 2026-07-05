@@ -14,6 +14,9 @@ const beat = z.object({
       taste_mood: z.string().default(''),
     })
     .default({}),
+  images: z
+    .array(z.object({ image: z.string().default(''), caption: z.string().default('') }))
+    .default([]),
   narration: z.string().default(''),
   caption: z.string().default(''),
 });

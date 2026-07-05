@@ -6,6 +6,22 @@ const t = TYPES[beat.type] ?? { kr: beat.type || '장면', en: '' };
 const isAwe = beat.type === 'awe';
 const sensory = beat.sensory ?? {};
 const senses = SENSES.filter((s) => sensory[s.k] && String(sensory[s.k]).trim());
+
+// 내레이션을 «[[img: 경로 | 캡션]]» 마커 기준으로 텍스트/이미지 세그먼트로 분해
+type Seg = { kind: 'text'; text: string } | { kind: 'img'; src: string; cap: string };
+const segs: Seg[] = [];
+{
+  const parts = String(beat.narration || '').split(
+    /\[\[\s*img\s*:\s*([^\]|]+?)\s*(?:\|\s*([^\]]*?)\s*)?\]\]/
+  );
+  for (let i = 0; i < parts.length; i += 3) {
+    const text = parts[i];
+    if (text && text.trim()) segs.push({ kind: 'text', text: text.trim() });
+    const src = parts[i + 1];
+    if (src) segs.push({ kind: 'img', src: src.trim(), cap: (parts[i + 2] || '').trim() });
+  }
+}
+const extraImages = (beat.images ?? []).filter((im: any) => im && im.image);
 ---
 
 <article class:list={['beat', { awe: isAwe }]}>
@@ -25,7 +41,23 @@ const senses = SENSES.filter((s) => sensory[s.k] && String(sensory[s.k]).trim())
   )}
   {!beat.image && beat.caption && <p class="cap cap-left">{beat.caption}</p>}
 
-  {beat.narration && <p class="narr">{beat.narration}</p>}
+  {segs.map((seg) =>
+    seg.kind === 'text' ? (
+      <p class="narr">{seg.text}</p>
+    ) : (
+      <figure class="frame">
+        <img src={asset(seg.src)} alt={beat.location_name || t.kr} loading="lazy" />
+        {seg.cap && <figcaption class="cap">{seg.cap}</figcaption>}
+      </figure>
+    )
+  )}
+
+  {extraImages.map((im: any) => (
+    <figure class="frame">
+      <img src={asset(im.image)} alt={beat.location_name || t.kr} loading="lazy" />
+      {im.caption && <figcaption class="cap">{im.caption}</figcaption>}
+    </figure>
+  ))}
 
   {senses.length > 0 && (
     <div class="senses">
