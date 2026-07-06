@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Nanum+Myeongjo:wght@400;700&family=Nanum+Pen+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Nanum+Myeongjo:wght@400;700&family=Nanum+Pen+Script&family=Gothic+A1:wght@400;500;700&display=swap');
 
 /* 여행기뷰어 패널과 동일한 종이·여권 토큰 */
 :root {
@@ -12,7 +12,7 @@
   --pen: #4a5568;
   --serif: 'Gowun Batang', serif;
   --sans: 'Gowun Dodum', sans-serif;
-  --read: 'Nanum Myeongjo', serif;
+  --read: 'Gothic A1', sans-serif;
   --hand: 'Nanum Pen Script', cursive;
 }
 
